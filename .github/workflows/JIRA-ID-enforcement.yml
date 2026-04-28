@@ -1,6 +1,7 @@
 name: Jira ID Enforcer
 on:
-  pull_request:
+  workflow_call:  
+  pull_request:    
     types: [opened, edited, synchronize]
 
 jobs:
@@ -12,10 +13,11 @@ jobs:
         shell: bash
         run: |
           TITLE="${{ github.event.pull_request.title }}"
+          # Regex for JIRA ID
           if [[ $TITLE =~ [A-Z]+-[0-9]+ ]]; then
             echo "✅ Jira ID found"
             exit 0
           else
-            echo "❌ No Jira ID found"
+            echo "❌ No Jira ID found in title: $TITLE"
             exit 1
           fi
