@@ -4,7 +4,7 @@ on:
     types: [opened, edited, synchronize]
 
 jobs:
-  jira-validation:
+  jira-validation: 
     name: "Jira ID Validation"
     runs-on: [self-hosted]
     steps:
