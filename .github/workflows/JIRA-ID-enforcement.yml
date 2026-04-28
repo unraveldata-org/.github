@@ -1,0 +1,21 @@
+name: Jira ID Enforcer
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  jira-validation:
+    name: "Jira ID Validation"
+    runs-on: [self-hosted]
+    steps:
+      - name: Validate Jira ID
+        shell: bash
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          if [[ $TITLE =~ [A-Z]+-[0-9]+ ]]; then
+            echo "✅ Jira ID found"
+            exit 0
+          else
+            echo "❌ No Jira ID found"
+            exit 1
+          fi
