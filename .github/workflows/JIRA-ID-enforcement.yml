@@ -5,7 +5,7 @@ on:
 
 jobs:
   jira-validation:
-    name: "Jira ID Validation"
+    name: "Jira ID Validation Test"
     runs-on: [self-hosted]
     steps:
       - name: Validate Jira ID
