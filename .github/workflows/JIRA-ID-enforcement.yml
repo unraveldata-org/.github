@@ -1,6 +1,11 @@
 name: Jira ID Enforcer
+
 on:
-  workflow_call:      # This allows the ruleset to "call" this workflow
+  workflow_call:
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   jira-validation:
@@ -10,12 +15,16 @@ jobs:
       - name: Validate Jira ID
         shell: bash
         run: |
+          # Title ko safely handle karne ke liye
           TITLE="${{ github.event.pull_request.title }}"
-          # Regex for JIRA ID
-          if [[ $TITLE =~ [A-Z]+-[0-9]+ ]]; then
-            echo "✅ Jira ID found"
+          
+          echo "Validating PR Title: $TITLE"
+          
+          # Jira ID Regex (Letters-Numbers)
+          if [[ "$TITLE" =~ [A-Z]+-[0-9]+ ]]; then
+            echo "✅ Success: Jira ID found."
             exit 0
           else
-            echo "❌ No Jira ID found in title: $TITLE"
+            echo "❌ Error: PR title must contain a Jira ID (e.g., PROJ-123)."
             exit 1
           fi
