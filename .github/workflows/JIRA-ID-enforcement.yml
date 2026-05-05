@@ -1,8 +1,6 @@
 name: Jira ID Enforcer
 on:
   workflow_call:      # This allows the ruleset to "call" this workflow
-  pull_request:       # This allows testing inside the .github repo itself
-    types: [opened, edited, synchronize]
 
 jobs:
   jira-validation:
