@@ -3,7 +3,7 @@ name: Jira ID Enforcer
 on:
   workflow_call:
   pull_request:
-    types: [opened, edited, synchronize]
+    types: [opened, edited, synchronize, ready_for_review]
 
 permissions:
   contents: read
