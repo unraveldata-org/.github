@@ -21,10 +21,12 @@ jobs:
         shell: bash
         run: |
           TITLE="${{ github.event.pull_request.title }}"
-          if [[ "$TITLE" =~ [A-Z]+-[0-9]+ ]]; then
-            echo "✅ Pass: Jira ID found."
+          echo "Validating Title: $TITLE"
+         
+          if [[ "$TITLE" =~ [A-Z0-9]+-[0-9]+ ]]; then
+            echo "✅ Pass: Valid Jira ID found."
             exit 0
           else
-            echo "❌ Fail: PR Title must have a Jira ID (e.g. PROJ-123)."
+            echo "❌ Fail: PR Title must have a Jira ID (e.g. PROJ-123 or U49-341)."
             exit 1
           fi
