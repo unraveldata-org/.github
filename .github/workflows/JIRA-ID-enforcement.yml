@@ -2,7 +2,6 @@ name: Jira ID Enforcer
 
 on:
   workflow_call:
-
   pull_request:
     types: [opened, edited, synchronize]
 
@@ -14,17 +13,18 @@ jobs:
   jira-validation:
     name: "Jira ID Validation"
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
     steps:
-      - name: Validate Jira ID
+      - name: Check Title
         shell: bash
         run: |
           TITLE="${{ github.event.pull_request.title }}"
-          echo "Validating PR Title: $TITLE"
-          
           if [[ "$TITLE" =~ [A-Z]+-[0-9]+ ]]; then
-            echo "✅ Success: Jira ID found."
+            echo "✅ Pass: Jira ID found."
             exit 0
           else
-            echo "❌ Error: PR title must contain a Jira ID (e.g., PROJ-123)."
+            echo "❌ Fail: PR Title must have a Jira ID (e.g. PROJ-123)."
             exit 1
           fi
