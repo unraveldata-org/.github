@@ -12,7 +12,7 @@ permissions:
 jobs:
   jira-validation:
     name: "Jira ID Validation"
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, quick]
     concurrency:
       group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
       cancel-in-progress: true
