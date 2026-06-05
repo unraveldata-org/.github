@@ -19,9 +19,11 @@ jobs:
     steps:
       - name: Check Title
         shell: bash
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
           if echo "$TITLE" | grep -qE '[A-Z][A-Z0-9]+-[0-9]+'; then
+            echo "✅ Success: Jira ID found."
             exit 0
           else
             echo "❌ Fail: Title must contain a Jira ID (e.g., SNOW-4300, U49-341)."
