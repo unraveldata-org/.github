@@ -22,7 +22,7 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if echo "$TITLE" | grep -qE '[A-Z][A-Z0-9]+-[0-9]+'; then
+          if echo "$TITLE" | grep -qiE '[A-Z][A-Z0-9]*-[0-9]+'; then
             echo "✅ Success: Jira ID found."
             exit 0
           else
