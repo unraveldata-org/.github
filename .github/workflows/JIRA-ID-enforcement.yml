@@ -22,7 +22,8 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if echo "$PR_TITLE" | grep -qiE '[a-z0-9]+[- ]+[a-z0-9]+'; then
+          # Regex updated to mandate a DASH and Numbers after it
+          if echo "$PR_TITLE" | grep -qiE '[a-z0-9]+-[0-9]+'; then
             echo "✅ Success: Valid Jira ID pattern found in the title."
             exit 0
           else
@@ -34,13 +35,12 @@ jobs:
             echo ""
             echo "How to fix this:"
             echo "Please edit your PR title to include a valid ticket identifier."
-            echo "The title must contain letters/numbers followed by a dash or space, then numbers."
+            echo "The title must contain letters/numbers followed by a DASH (-), then numbers."
             echo ""
             echo "Valid Examples:"
             echo "  - DT-6871: UI port UI changes to 4799"
             echo "  - U49-341: STS creds integration"
             echo "  - SNOW-4300: Loading insights section"
-            echo "  - PROJ 123: Update documentation"
             echo "========================================================================"
             exit 1
           fi
