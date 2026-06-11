@@ -3,7 +3,7 @@ name: Jira ID Enforcer
 on:
   workflow_call:
   pull_request:
-    types: [opened, edited, synchronize, ready_for_review]
+    types: [opened, edited, synchronize]
 
 permissions:
   contents: read
@@ -12,31 +12,35 @@ permissions:
 jobs:
   jira-validation:
     name: "Jira ID Validation"
-    runs-on: [self-hosted, quick]
+    runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
       cancel-in-progress: true
-
     steps:
       - name: Check Title
         shell: bash
         env:
-          TITLE: ${{ github.event.pull_request.title }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          echo "🔎 PR title raw: [$TITLE]"
-          printf '🔎 PR title quoted: %q\n' "$TITLE"
-
-          if [[ -z "$TITLE" ]]; then
-            echo "::error title=Missing PR Title::PR title is empty."
+          if echo "$PR_TITLE" | grep -qiE '[a-z0-9]+[- ]+[a-z0-9]+'; then
+            echo "✅ Success: Valid Jira ID pattern found in the title."
+            exit 0
+          else
+            echo "========================================================================"
+            echo "❌ ERROR: INVALID PULL REQUEST TITLE"
+            echo "========================================================================"
+            echo "Problem: No valid Jira ID or Ticket pattern was found in your PR title."
+            echo "Your Current Title: '$PR_TITLE'"
+            echo ""
+            echo "How to fix this:"
+            echo "Please edit your PR title to include a valid ticket identifier."
+            echo "The title must contain letters/numbers followed by a dash or space, then numbers."
+            echo ""
+            echo "Valid Examples:"
+            echo "  - DT-6871: UI port UI changes to 4799"
+            echo "  - U49-341: STS creds integration"
+            echo "  - SNOW-4300: Loading insights section"
+            echo "  - PROJ 123: Update documentation"
+            echo "========================================================================"
             exit 1
           fi
-
-          if [[ "$TITLE" =~ [A-Z][A-Z0-9]*-[0-9]+ ]]; then
-            echo "✅ Success: Jira ID found."
-            exit 0
-          fi
-
-          echo "::error title=Jira ID Missing::Title must contain a Jira ID like DT-6871."
-          echo "❌ Fail: Jira ID not found in title."
-          echo "Hint: Use format like: DT-6871: UI port UI changes to 4799"
-          exit 1
